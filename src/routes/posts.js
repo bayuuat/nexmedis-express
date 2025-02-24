@@ -6,7 +6,32 @@ const authMiddleware = require("../middleware/auth");
 const fs = require("fs").promises;
 const path = require("path");
 
-// Create post with images
+/**
+ * @swagger
+ * /posts:
+ *   post:
+ *     summary: Create a new post with images
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       201:
+ *         description: Post created successfully
+ */
 router.post("/", 
   authMiddleware, 
   upload.array("images", 5), 
@@ -35,7 +60,18 @@ router.post("/",
 	}
 });
 
-// Get all posts with images, likes, and comments
+/**
+ * @swagger
+ * /posts:
+ *   get:
+ *     summary: Get all posts
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of posts
+ */
 router.get("/", authMiddleware, async (req, res) => {
 	try {
 		const posts = await prisma.post.findMany({
@@ -73,6 +109,26 @@ router.get("/", authMiddleware, async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /posts/{postId}:
+ *   get:
+ *     summary: Get a single post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Post details
+ *       404:
+ *         description: Post not found
+ */
 router.get("/:postId", authMiddleware, async (req, res) => {
 	try {
 		const post = await prisma.post.findFirstOrThrow({
@@ -118,7 +174,26 @@ router.get("/:postId", authMiddleware, async (req, res) => {
 	}
 });
 
-// Delete post and associated images
+/**
+ * @swagger
+ * /posts/{id}:
+ *   delete:
+ *     summary: Delete a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Post deleted successfully
+ *       404:
+ *         description: Post not found
+ */
 router.delete("/:id", authMiddleware, async (req, res) => {
 	try {
 		const post = await prisma.post.findFirst({

@@ -9,8 +9,13 @@ const { upload, handleUploadError } = require('./middleware/upload');
 const postRoutes = require('./routes/posts');
 const likeRoutes = require('./routes/likes');
 const commentRoutes = require('./routes/comments');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 const app = express();
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Middlewares
 app.use(cors());

@@ -5,6 +5,35 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../config/prisma');
 const authMiddleware = require('../middleware/auth');
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - fullname
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               fullname:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       500:
+ *         description: Server error
+ */
 router.post('/register', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -20,6 +49,37 @@ router.post('/register', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ */
 router.post('/login', async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
@@ -41,7 +101,41 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Get user profile
+/**
+ * @swagger
+ * /auth/profile:
+ *   get:
+ *     summary: Get user profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 username:
+ *                   type: string
+ *                 fullname:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 _count:
+ *                   type: object
+ *                   properties:
+ *                     posts:
+ *                       type: integer
+ *                     likes:
+ *                       type: integer
+ *                     comments:
+ *                       type: integer
+ */
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({

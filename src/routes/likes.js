@@ -3,7 +3,24 @@ const router = express.Router();
 const prisma = require('../config/prisma');
 const authMiddleware = require('../middleware/auth');
 
-// Create like
+/**
+ * @swagger
+ * /likes/{postId}:
+ *   post:
+ *     summary: Like a post
+ *     tags: [Likes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       201:
+ *         description: Like created successfully
+ */
 router.post('/:postId', authMiddleware, async (req, res) => {
   try {
     const like = await prisma.like.create({
@@ -22,7 +39,22 @@ router.post('/:postId', authMiddleware, async (req, res) => {
   }
 });
 
-// Get likes for a post
+/**
+ * @swagger
+ * /likes/post/{postId}:
+ *   get:
+ *     summary: Get likes for a post
+ *     tags: [Likes]
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of likes
+ */
 router.get('/post/:postId', async (req, res) => {
   try {
     const likes = await prisma.like.findMany({
@@ -35,7 +67,24 @@ router.get('/post/:postId', async (req, res) => {
   }
 });
 
-// Delete like
+/**
+ * @swagger
+ * /likes/{postId}:
+ *   delete:
+ *     summary: Remove like from a post
+ *     tags: [Likes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Like removed successfully
+ */
 router.delete('/:postId', authMiddleware, async (req, res) => {
   try {
     await prisma.like.delete({

@@ -3,7 +3,35 @@ const router = express.Router();
 const prisma = require('../config/prisma');
 const authMiddleware = require('../middleware/auth');
 
-// Create comment
+/**
+ * @swagger
+ * /comments/{postId}:
+ *   post:
+ *     summary: Create a comment
+ *     tags: [Comments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Comment created successfully
+ */
 router.post('/:postId', authMiddleware, async (req, res) => {
   try {
     const comment = await prisma.comment.create({
